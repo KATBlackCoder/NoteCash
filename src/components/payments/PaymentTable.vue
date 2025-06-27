@@ -51,7 +51,6 @@ import { NCard, NDataTable, NButton, NModal, NSpace, NAlert, useDialog } from 'n
 import type { DataTableColumns } from 'naive-ui';
 import { Payment } from '../../types/payment';
 import PaymentForm from './PaymentForm.vue';
-import { open } from '@tauri-apps/plugin-dialog';
 
 // Initialize store
 const paymentsStore = usePaymentsStore();
@@ -159,19 +158,16 @@ const handleEdit = (payment: Payment) => {
 };
 
 // Handle delete button click
-const handleDelete = async (payment: Payment) => {
-  // Show native confirmation dialog using Tauri plugin
-  const confirmed = await open({
+const handleDelete = (payment: Payment) => {
+  dialog.warning({
     title: 'Confirm Deletion',
-    message: `Are you sure you want to delete the payment for ${payment.customer_name}?`,
-    type: 'warning',
-    okLabel: 'Delete',
-    cancelLabel: 'Cancel'
+    content: `Are you sure you want to delete the payment for ${payment.customer_name}?`,
+    positiveText: 'Delete',
+    negativeText: 'Cancel',
+    onPositiveClick: async () => {
+      await paymentsStore.deletePayment(payment.id!);
+    }
   });
-
-  if (confirmed) {
-    await paymentsStore.deletePayment(payment.id!);
-  }
 };
 
 // Handle payment updated from form
