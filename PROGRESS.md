@@ -76,6 +76,7 @@ This document tracks the development progress of the NoteCash application.
   - Added file system integration to save PDF to user-selected location
   - Provided success feedback using Naive UI dialog
   - Configured proper file system permissions in capabilities
+  - Added option to open saved PDF directly from the success dialog
 
 ### Phase 4: Polishing & Refinements 🔄
 

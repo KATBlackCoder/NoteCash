@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import { Payment } from "../../types/payment";
 import { NCard, NText, NSpace, useThemeVars } from "naive-ui";
 import { format } from "date-fns";

@@ -72,6 +72,7 @@ _NPM Packages Needed: `html2canvas-pro`, `jspdf`_
 2.  **Save PDF to Disk**
     - [x] Use `@tauri-apps/plugin-dialog` to open a native "Save File" dialog for the user to choose a location and filename.
     - [x] Use `@tauri-apps/plugin-fs` to write the generated PDF data to the selected file path.
+    - [x] Use `@tauri-apps/plugin-opener` to open the saved PDF file when requested by the user.
     - [x] ~~(Optional) Use `@tauri-apps/plugin-opener` to automatically open the saved PDF for the user.~~
 
 ---

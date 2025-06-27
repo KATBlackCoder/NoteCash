@@ -239,6 +239,7 @@ const exportToPDF = async () => {
     const { jsPDF } = await import('jspdf');
     const { save } = await import('@tauri-apps/plugin-dialog');
     const { writeFile } = await import('@tauri-apps/plugin-fs');
+    const { openPath } = await import('@tauri-apps/plugin-opener');
 
     // Show loading state
     isLoading.value = true;
@@ -306,10 +307,23 @@ const exportToPDF = async () => {
       // Write to file
       await writeFile(filePath, new Uint8Array(pdfData));
       
-      // Show success message
+      // Show success message with option to open the PDF
       dialog.success({
         title: 'Success',
         content: 'Payment receipt saved successfully!',
+        positiveText: 'Open PDF',
+        negativeText: 'Close',
+        onPositiveClick: async () => {
+          try {
+            await openPath(filePath);
+          } catch (error) {
+            console.error('Error opening PDF:', error);
+            dialog.error({
+              title: 'Error',
+              content: 'Failed to open the PDF file.',
+            });
+          }
+        }
       });
     }
   } catch (error) {
