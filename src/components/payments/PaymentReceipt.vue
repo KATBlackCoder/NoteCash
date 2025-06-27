@@ -3,7 +3,7 @@
     <n-space vertical size="small">
       <div class="info-row">
         <n-text class="info-label">Date</n-text>
-        <n-text class="info-value">{{ formatDate(payment.payment_date) }}</n-text>
+        <n-text class="info-value">{{ formattedDate }}</n-text>
       </div>
       <div class="detail-row">
         <n-text class="detail-label">Montant</n-text>
@@ -25,9 +25,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 import { Payment } from "../../types/payment";
 import { NCard, NText, NSpace, useThemeVars } from "naive-ui";
+import { format } from "date-fns";
 
 const props = defineProps<{
   payment: Payment;
@@ -41,17 +42,10 @@ const formatAmount = (amount: number): string => {
   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
 
-// Format date to DD MM YYYY à HH:MM format
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  
-  return `${day} ${month} ${year} à ${hours}:${minutes}`;
-};
+// Format date using date-fns
+const formattedDate = computed(() => {
+  return format(new Date(props.payment.payment_date), "dd/MM/yyyy 'at' HH:mm");
+});
 </script>
 
 <style scoped>

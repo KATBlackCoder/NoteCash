@@ -26,6 +26,7 @@
 import { computed } from 'vue';
 import { NGrid, NGridItem, NCard, NStatistic } from 'naive-ui';
 import { Payment } from '../../types/payment';
+import { subDays, isAfter, parseISO } from 'date-fns';
 
 // Define props
 const props = defineProps<{
@@ -39,11 +40,13 @@ const totalAmount = computed(() => {
   return props.payments.reduce((sum, payment) => sum + payment.amount, 0);
 });
 
-// Get count of payments from the last 7 days
+// Get count of payments from the last 7 days using date-fns
 const recentCount = computed(() => {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const oneWeekAgo = subDays(new Date(), 7);
   
-  return props.payments.filter(payment => new Date(payment.payment_date) >= oneWeekAgo).length;
+  return props.payments.filter(payment => {
+    const paymentDate = new Date(payment.payment_date);
+    return isAfter(paymentDate, oneWeekAgo);
+  }).length;
 });
 </script> 

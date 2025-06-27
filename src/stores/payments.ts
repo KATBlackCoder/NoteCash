@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import Database from '@tauri-apps/plugin-sql';
 import { Payment } from '../types/payment';
+import { format, parseISO } from 'date-fns';
 
 export const usePaymentsStore = defineStore('payments', () => {
   // State
@@ -11,6 +12,15 @@ export const usePaymentsStore = defineStore('payments', () => {
   const error = ref<string | null>(null);
   const db = ref<any>(null);
   const isDbInitialized = ref(false);
+
+  // Computed
+  const formattedPayments = computed(() => {
+    return payments.value.map(payment => ({
+      ...payment,
+      formattedDate: format(new Date(payment.payment_date), 'dd/MM/yyyy'),
+      formattedAmount: payment.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + ' CFA'
+    }));
+  });
 
   // Actions
   async function initializeDb() {
@@ -174,6 +184,7 @@ export const usePaymentsStore = defineStore('payments', () => {
 
   return {
     payments,
+    formattedPayments,
     isLoading,
     error,
     fetchPayments,

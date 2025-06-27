@@ -3,7 +3,7 @@
     <div class="table-header">
       <n-space justify="space-between">
         <n-text v-if="selectedPayment" type="success">
-          Selected: {{ selectedPayment.customer_name }} - {{ new Date(selectedPayment.payment_date).toLocaleDateString() }}
+          Selected: {{ selectedPayment.customer_name }} - {{ formattedSelectedDate }}
         </n-text>
         <n-text v-else type="warning">
           Select a payment to export as receipt
@@ -58,10 +58,11 @@ import { NCard, NDataTable, NButton, NModal, NSpace, NAlert, useDialog, NText } 
 import type { DataTableColumns } from 'naive-ui';
 import { Payment } from '../../types/payment';
 import PaymentForm from './PaymentForm.vue';
+import { format } from 'date-fns';
 
 // Initialize store
 const paymentsStore = usePaymentsStore();
-const { payments, isLoading, error } = storeToRefs(paymentsStore);
+const { payments, formattedPayments, isLoading, error } = storeToRefs(paymentsStore);
 
 // Computed property to check if there are any payments
 const hasPayments = computed(() => payments.value && payments.value.length > 0);
@@ -70,6 +71,12 @@ const hasPayments = computed(() => payments.value && payments.value.length > 0);
 const showEditModal = ref(false);
 const selectedPayment = ref<Payment | undefined>(undefined);
 const selectedPaymentForEdit = ref<Payment | undefined>(undefined);
+
+// Computed property for formatted selected payment date
+const formattedSelectedDate = computed(() => {
+  if (!selectedPayment.value) return '';
+  return format(new Date(selectedPayment.value.payment_date), 'PPP');
+});
 
 // Dialog for confirmation
 const dialog = useDialog();
@@ -96,7 +103,7 @@ const columns = computed<DataTableColumns<Payment>>(() => [
     title: 'Date',
     key: 'payment_date',
     render(row: Payment) {
-      return new Date(row.payment_date).toLocaleDateString();
+      return format(new Date(row.payment_date), 'dd/MM/yyyy');
     }
   },
   {

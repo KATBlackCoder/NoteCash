@@ -76,12 +76,14 @@ _NPM Packages Needed: `html2canvas-pro`, `jspdf`_
 
 ---
 
-### Phase 4: Polishing & Refinements
+### Phase 4: Polishing & Refinements 🔄
 
 _Objective: Improve the user experience and add final touches._
 _Tauri Plugins Needed: `@tauri-apps/plugin-window-state`, `@tauri-apps/plugin-log`_
+_NPM Packages Needed: `date-fns`_
 
 1.  **UX Enhancements**
+    - [x] Implement consistent date formatting using `date-fns` across the application.
     - [ ] Use `@tauri-apps/plugin-window-state` to save and restore the window's size and position.
     - [ ] Add loading indicators (e.g., `n-spin`) during database operations.
     - [ ] Provide user feedback on success or failure of operations using Naive UI's `notification` system.

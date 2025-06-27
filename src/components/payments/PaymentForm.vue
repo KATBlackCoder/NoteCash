@@ -42,6 +42,7 @@ import {
 } from 'naive-ui';
 import type { FormInst, FormRules } from 'naive-ui';
 import { Payment } from '../../types/payment';
+import { format, parseISO } from 'date-fns';
 
 // Define props
 const props = defineProps<{
@@ -131,9 +132,9 @@ const handleSubmit = () => {
     .then(async () => {
       isSubmitting.value = true;
       try {
-        // Convert date to string format
+        // Convert date to ISO string format using date-fns
         const paymentDate = formModel.value.payment_date 
-          ? new Date(formModel.value.payment_date).toISOString().split('T')[0]
+          ? format(new Date(formModel.value.payment_date), 'yyyy-MM-dd')
           : '';
         
         const paymentData: Payment = {
