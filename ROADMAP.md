@@ -58,21 +58,21 @@ _Tauri Plugins Needed: `@tauri-apps/plugin-dialog`_
 
 ---
 
-### Phase 3: PDF Export
+### Phase 3: PDF Export ✅
 
 _Objective: Allow users to save the payment list as a PDF file._
-_Tauri Plugins Needed: `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-fs`, `@tauri-apps/plugin-shell`_
+_Tauri Plugins Needed: `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-fs`, `@tauri-apps/plugin-opener`_
 _NPM Packages Needed: `html2canvas-pro`, `jspdf`_
 
 1.  **Implement PDF Generation**
-    - [ ] Add an "Export to PDF" button to the UI.
-    - [ ] On click, use `html2canvas-pro` to capture the payments table (or a specially formatted version of it).
-    - [ ] Use `jspdf` to convert the resulting canvas image into a PDF document.
+    - [x] Add an "Export to PDF" button to the UI.
+    - [x] On click, use `html2canvas-pro` to capture the payments table (or a specially formatted version of it).
+    - [x] Use `jspdf` to convert the resulting canvas image into a PDF document.
 
 2.  **Save PDF to Disk**
-    - [ ] Use `@tauri-apps/plugin-dialog` to open a native "Save File" dialog for the user to choose a location and filename.
-    - [ ] Use `@tauri-apps/plugin-fs` to write the generated PDF data to the selected file path.
-    - [ ] (Optional) Use `@tauri-apps/plugin-shell` to automatically open the saved PDF for the user.
+    - [x] Use `@tauri-apps/plugin-dialog` to open a native "Save File" dialog for the user to choose a location and filename.
+    - [x] Use `@tauri-apps/plugin-fs` to write the generated PDF data to the selected file path.
+    - [x] ~~(Optional) Use `@tauri-apps/plugin-opener` to automatically open the saved PDF for the user.~~
 
 ---
 

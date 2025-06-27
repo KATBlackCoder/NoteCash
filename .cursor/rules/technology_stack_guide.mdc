@@ -30,7 +30,8 @@ This guide outlines the key technology choices for the NoteCash project. Adhere 
 The project relies on a set of official Tauri plugins. When implementing features, prefer using these plugins over custom solutions if they fit the requirements.
 
 - **Database**: Use `@tauri-apps/plugin-sql` with the bundled SQLite driver for all database interactions.
-- **Native UI**: For native dialogs (file open/save), use `@tauri-apps/plugin-dialog`. For shell interactions (like opening a file), use `@tauri-apps/plugin-shell`.
+- **Native UI**: For native dialogs (file open/save), use `@tauri-apps/plugin-dialog`. To open files or URLs, use `@tauri-apps/plugin-opener`.
+- **Shell**: For executing shell commands, use `@tauri-apps/plugin-shell`.
 - **File System**: All direct file system reads and writes should go through `@tauri-apps/plugin-fs`.
 - **User Experience**: To persist window state (size, position), use `@tauri-apps/plugin-window-state`.
 - **Logging & Updates**: Use `@tauri-apps/plugin-log` for logging and `@tauri-apps/plugin-updater` for managing application updates.

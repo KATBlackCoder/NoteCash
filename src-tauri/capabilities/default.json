@@ -10,6 +10,10 @@
     "opener:default",
     "sql:default",
     "sql:allow-execute",
-    "dialog:default"
+    "dialog:default",
+    "fs:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "opener:allow-open-path"
   ]
 }

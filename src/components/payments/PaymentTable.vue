@@ -1,9 +1,15 @@
 <template>
   <n-card title="Payment Records">
     <div class="table-header">
-      <n-space justify="end">
-        <n-button type="info" @click="exportToPDF" :disabled="!hasPayments">
-          Export to PDF
+      <n-space justify="space-between">
+        <n-text v-if="selectedPayment" type="success">
+          Selected: {{ selectedPayment.customer_name }} - {{ new Date(selectedPayment.payment_date).toLocaleDateString() }}
+        </n-text>
+        <n-text v-else type="warning">
+          Select a payment to export as receipt
+        </n-text>
+        <n-button type="info" @click="exportToPDF" :disabled="!hasPayments || !selectedPayment">
+          Export Receipt to PDF
         </n-button>
       </n-space>
     </div>
@@ -24,6 +30,7 @@
       :loading="isLoading"
       :pagination="pagination"
       :bordered="false"
+      :row-props="rowProps"
     />
 
     <!-- Empty state message -->
@@ -34,7 +41,7 @@
     <!-- Edit Payment Modal -->
     <n-modal v-model:show="showEditModal" preset="card" :title="'Edit Payment'" style="width: 600px">
       <payment-form 
-        :payment="selectedPayment" 
+        :payment="selectedPaymentForEdit" 
         :is-modal="true"
         @payment-updated="handlePaymentUpdated" 
         @cancel="showEditModal = false" 
@@ -47,7 +54,7 @@
 import { onMounted, computed, ref, h } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePaymentsStore } from '../../stores/payments';
-import { NCard, NDataTable, NButton, NModal, NSpace, NAlert, useDialog } from 'naive-ui';
+import { NCard, NDataTable, NButton, NModal, NSpace, NAlert, useDialog, NText } from 'naive-ui';
 import type { DataTableColumns } from 'naive-ui';
 import { Payment } from '../../types/payment';
 import PaymentForm from './PaymentForm.vue';
@@ -62,9 +69,22 @@ const hasPayments = computed(() => payments.value && payments.value.length > 0);
 // Modal state
 const showEditModal = ref(false);
 const selectedPayment = ref<Payment | undefined>(undefined);
+const selectedPaymentForEdit = ref<Payment | undefined>(undefined);
 
 // Dialog for confirmation
 const dialog = useDialog();
+
+// Row props for selection highlighting
+const rowProps = (row: Payment) => {
+  return {
+    style: selectedPayment.value && selectedPayment.value.id === row.id 
+      ? 'background-color: rgba(0, 128, 0, 0.1);' 
+      : '',
+    onClick: () => {
+      selectedPayment.value = row;
+    }
+  };
+};
 
 // Table columns
 const columns = computed<DataTableColumns<Payment>>(() => [
@@ -103,8 +123,23 @@ const columns = computed<DataTableColumns<Payment>>(() => [
               NButton,
               {
                 size: 'small',
+                type: 'success',
+                onClick: (e) => {
+                  e.stopPropagation();
+                  selectedPayment.value = row;
+                }
+              },
+              { default: () => 'Select' }
+            ),
+            h(
+              NButton,
+              {
+                size: 'small',
                 type: 'primary',
-                onClick: () => handleEdit(row)
+                onClick: (e) => {
+                  e.stopPropagation();
+                  handleEdit(row);
+                }
               },
               { default: () => 'Edit' }
             ),
@@ -113,7 +148,10 @@ const columns = computed<DataTableColumns<Payment>>(() => [
               {
                 size: 'small',
                 type: 'error',
-                onClick: () => handleDelete(row)
+                onClick: (e) => {
+                  e.stopPropagation();
+                  handleDelete(row);
+                }
               },
               { default: () => 'Delete' }
             )
@@ -153,7 +191,7 @@ const retryFetch = async () => {
 
 // Handle edit button click
 const handleEdit = (payment: Payment) => {
-  selectedPayment.value = { ...payment };
+  selectedPaymentForEdit.value = { ...payment };
   showEditModal.value = true;
 };
 
@@ -173,13 +211,110 @@ const handleDelete = (payment: Payment) => {
 // Handle payment updated from form
 const handlePaymentUpdated = () => {
   showEditModal.value = false;
-  selectedPayment.value = undefined;
+  selectedPaymentForEdit.value = undefined;
 };
 
 // Export to PDF function
-const exportToPDF = () => {
-  // This will be implemented in Phase 3
-  alert('Export functionality will be available in a future update.');
+const exportToPDF = async () => {
+  try {
+    // Get the selected payment for the receipt
+    if (!selectedPayment.value) {
+      // If no payment is selected, show error
+      dialog.warning({
+        title: 'No Payment Selected',
+        content: 'Please select a payment to export as PDF',
+      });
+      return;
+    }
+
+    // Import libraries dynamically to avoid loading them unnecessarily
+    const html2canvas = (await import('html2canvas-pro')).default;
+    const { jsPDF } = await import('jspdf');
+    const { save } = await import('@tauri-apps/plugin-dialog');
+    const { writeFile } = await import('@tauri-apps/plugin-fs');
+
+    // Show loading state
+    isLoading.value = true;
+
+    // Create a temporary div to render the receipt
+    const receiptContainer = document.createElement('div');
+    receiptContainer.style.position = 'absolute';
+    receiptContainer.style.left = '-9999px';
+    document.body.appendChild(receiptContainer);
+
+    // Create a new Vue app instance for the receipt
+    const { createApp } = await import('vue');
+    const { default: PaymentReceipt } = await import('./PaymentReceipt.vue');
+    
+    // Create and mount the receipt component
+    const receiptApp = createApp(PaymentReceipt, {
+      payment: selectedPayment.value
+    });
+    
+    const receiptInstance = receiptApp.mount(receiptContainer);
+    
+    // Wait a bit for the component to render
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Create canvas from the receipt element
+    const canvas = await html2canvas(receiptContainer.firstChild as HTMLElement, {
+      scale: 2, // Higher scale for better quality
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#1a1a1f'
+    });
+
+    // Clean up the temporary elements
+    receiptApp.unmount();
+    document.body.removeChild(receiptContainer);
+
+    // Calculate dimensions for A4 portrait
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    // Create PDF document
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    // Add image of the receipt
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+
+    // Open save dialog
+    const filePath = await save({
+      filters: [{
+        name: 'PDF',
+        extensions: ['pdf']
+      }],
+      defaultPath: `payment_receipt_${selectedPayment.value.customer_name.replace(/\s+/g, '_')}.pdf`
+    });
+
+    if (filePath) {
+      // Convert PDF to binary data
+      const pdfData = pdf.output('arraybuffer');
+      
+      // Write to file
+      await writeFile(filePath, new Uint8Array(pdfData));
+      
+      // Show success message
+      dialog.success({
+        title: 'Success',
+        content: 'Payment receipt saved successfully!',
+      });
+    }
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    // Show error message using Naive UI
+    dialog.error({
+      title: 'PDF Generation Error',
+      content: 'Failed to generate PDF. Please try again.',
+    });
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 

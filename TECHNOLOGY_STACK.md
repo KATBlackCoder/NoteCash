@@ -32,7 +32,8 @@ The official Tauri plugins are managed in the [`/tauri-apps/plugins-workspace`](
   - **Driver**: The SQLite driver is included with the plugin and activated using the command: `cargo add tauri-plugin-sql --features sqlite`. This command, run in the `src-tauri` directory, configures the plugin to work with a SQLite database, which will store your data in a single file.
 - **Native UI**:
   - **[@tauri-apps/plugin-dialog](https://tauri.app/plugin/dialog/)**: For using native file open/save dialogs.
-  - **[@tauri-apps/plugin-shell](https://tauri.app/plugin/shell/)**: To interact with the user's shell, for example, to open the generated PDF file with the default system viewer.
+  - **[@tauri-apps/plugin-opener](https://tauri.app/plugin/opener/)**: To open files (like the generated PDF) or URLs with the system's default application. This was previously part of the shell plugin.
+- **[@tauri-apps/plugin-shell](https://tauri.app/plugin/shell/)**: To execute shell commands and manage sidecar processes.
 - **File System**:
   - **[@tauri-apps/plugin-fs](https://tauri.app/plugin/file-system/)**: For reading from and writing to the file system.
 - **User Experience**:
