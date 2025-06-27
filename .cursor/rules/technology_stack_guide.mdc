@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+<!--
+@skipDocs
+This rule is a high-level summary of the TECHNOLOGY_STACK.md file. It provides guidance on the technology choices made for the NoteCash project, ensuring that future development aligns with the established stack.
+-->
+
+# NoteCash Technology Stack Guide
+
+This guide outlines the key technology choices for the NoteCash project. Adhere to this stack to maintain consistency and leverage the chosen frameworks and libraries effectively.
+
+## Core Architecture
+- **Desktop Shell**: Tauri is the foundation for our cross-platform desktop app.
+- **UI Framework**: Vue.js 3 is used for building all user interface components.
+- **Component Library**: Naive UI is the standard component library. Use its components for all UI elements to ensure a consistent look and feel.
+- **Language**: TypeScript is used for all frontend code to ensure type safety.
+
+## Frontend Development
+- **State Management**: All application state should be managed using Pinia. Create new stores as needed for different domains of the application.
+- **Routing**: Use Vue Router for all navigation and page routing.
+- **Fonts**: The application uses self-hosted fonts via `vfonts`. Use 'Lato' for general text and 'Fira Code' for any monospaced text.
+- **Icons**: Use icons from the Carbon set via `@vicons/carbon`.
+- **PDF Generation**: For creating PDFs, the intended workflow is to use `html2canvas-pro` to capture UI elements and `jspdf` to generate the PDF file.
+- **Date Handling**: Use `date-fns` for all date parsing, formatting, and manipulation to ensure consistency.
+
+## Backend & System (Tauri Plugins)
+The project relies on a set of official Tauri plugins. When implementing features, prefer using these plugins over custom solutions if they fit the requirements.
+
+- **Database**: Use `@tauri-apps/plugin-sql` with the bundled SQLite driver for all database interactions.
+- **Native UI**: For native dialogs (file open/save), use `@tauri-apps/plugin-dialog`. For shell interactions (like opening a file), use `@tauri-apps/plugin-shell`.
+- **File System**: All direct file system reads and writes should go through `@tauri-apps/plugin-fs`.
+- **User Experience**: To persist window state (size, position), use `@tauri-apps/plugin-window-state`.
+- **Logging & Updates**: Use `@tauri-apps/plugin-log` for logging and `@tauri-apps/plugin-updater` for managing application updates.
+

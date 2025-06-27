@@ -6,13 +6,17 @@ This document outlines the technology choices for the NoteCash desktop applicati
 
 - **[Tauri](https://tauri.app/)**: For building the cross-platform desktop application shell.
 - **[Vue.js 3](https://vuejs.org/)**: For building the user interface.
-- **[Quasar Framework](https://quasar.dev/)**: UI component library for Vue.js, providing a rich set of components and a cohesive design system.
+- **[Naive UI](https://www.naiveui.com/)**: A Vue 3 Component Library. Fairly Complete. Theme Customizable. Uses TypeScript. Fast.
 - **[TypeScript](https://www.typescriptlang.org/)**: For static typing, improving code quality and maintainability.
 
 ## Frontend
 
 - **State Management**: **[Pinia](https://pinia.vuejs.org/)** - The official state management library for Vue.js.
 - **Routing**: **[Vue Router](https://router.vuejs.org/)** - The official router for Vue.js.
+- **Fonts**:
+  - **[vfonts](https://github.com/07akioni/vfonts)**: Provides self-hosted web fonts (`Lato` for general text and `Fira Code` for monospaced/code text) to ensure consistent typography across all platforms, which is a common practice when working with Naive UI.
+- **Icons**:
+  - **[xicons](https://www.xicons.org/#/)**: A utility library for easily using a wide range of icon sets in Vue. We will primarily use the **Carbon** icon set.
 - **PDF Generation**:
   - **[html2canvas-pro](https://github.com/yorickshan/html2canvas-pro)**: Takes a "screenshot" of your application's UI (e.g., the list of payments) and draws it onto a canvas element.
   - **[jspdf](https://github.com/parallax/jsPDF)**: Takes the image from the canvas created by `html2canvas-pro` and embeds it into a PDF document, allowing the user to save it as a file. They work in tandem to create the final PDF from your UI.

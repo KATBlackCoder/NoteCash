@@ -4,53 +4,65 @@ This document outlines the planned development phases for the NoteCash applicati
 
 ---
 
-### Phase 1: Foundation & Core UI
+### Phase 1: Foundation & Core UI ✅
 
 _Objective: Set up the backend, database, and the main user interface for viewing and adding data._
+_Tauri Plugins Needed: `tauri-plugin-sql`_
+_NPM Packages Needed: `pinia`, `naive-ui`, `@vicons/carbon`, `vfonts`_
 
 1.  **Database Schema (Rust & Tauri)**
-    - [ ] Define the database schema for payments (`id`, `customer_name`, `payment_date`, `amount`, `reason`).
-    - [ ] Use `tauri-plugin-sql`'s migration feature in Rust to create the initial `payments` table.
-    - [ ] Initialize the database connection when the Tauri application starts.
-    - [ ] Update `capabilities` to allow `sql:allow-execute` for writing data.
+    - [x] Define the database schema for payments (`id`, `customer_name`, `payment_date`, `amount`, `reason`).
+    - [x] Use `tauri-plugin-sql`'s migration feature in Rust to create the initial `payments` table.
+    - [x] Initialize the database connection when the Tauri application starts.
+    - [x] Update `capabilities` to allow `sql:allow-execute` for writing data.
 
-2.  **Main UI Layout (Vue & Quasar)**
-    - [ ] Design the main page (`IndexPage.vue`) using Quasar components (`QLayout`, `QPage`).
-    - [ ] Create a form at the top of the page for adding new payments, using `QInput`, `QDate`, and `QBtn`. This form should now include a field for the `reason`.
-    - [ ] Add a `QTable` component below the form to display the list of payments, including the new `reason` column.
+2.  **Main UI Layout (Vue & Naive UI)**
+    - [x] Design the main page using Naive UI components (e.g., `n-layout`, `n-space`).
+    - [x] Create a form at the top of the page for adding new payments, using `n-input`, `n-date-picker`, and `n-button`. This form should now include a field for the `reason`.
+    - [x] Add an `n-data-table` component below the form to display the list of payments, including the new `reason` column.
 
 3.  **State Management (Pinia)**
-    - [ ] Create a `payments` store in Pinia to manage the application's state.
-    - [ ] Define state for the list of payments and any loading/error states.
-    - [ ] Create an action to fetch all payments from the backend.
+    - [x] Create a `payments` store in Pinia to manage the application's state.
+    - [x] Define state for the list of payments and any loading/error states.
+    - [x] Create an action to fetch all payments from the backend.
+
+4.  **UI/UX Improvements**
+    - [x] Implement proper navigation with Vue Router.
+    - [x] Create separate pages for adding payments and viewing payment records.
+    - [x] Add a consistent header with navigation links.
+    - [x] Implement theme toggle functionality (light/dark mode).
+    - [x] Use proper font styling with vfonts (Lato for text, Fira Code for code).
 
 ---
 
-### Phase 2: Core Functionality (CRUD)
+### Phase 2: Core Functionality (CRUD) ✅
 
 _Objective: Implement the core Create, Read, Update, and Delete operations for payments._
+_Tauri Plugins Needed: `@tauri-apps/plugin-dialog`_
 
 1.  **Create & Read Payments**
-    - [ ] On application startup, call the Pinia action to fetch and display all existing payments in the `QTable`.
-    - [ ] Connect the "Add Payment" form to a Pinia action that calls a Tauri command to `INSERT` the new payment into the database.
-    - [ ] After adding a new payment, automatically refresh the list in the UI.
+    - [x] On application startup, call the Pinia action to fetch and display all existing payments in the `n-data-table`.
+    - [x] Connect the "Add Payment" form to a Pinia action that calls a Tauri command to `INSERT` the new payment into the database.
+    - [x] After adding a new payment, automatically refresh the list in the UI.
 
 2.  **Update Payments**
-    - [ ] Add an "Edit" button to each row in the payments table.
-    - [ ] Clicking "Edit" will open a `QDialog` component pre-filled with the selected payment's data.
-    - [ ] Implement the save logic in the dialog to call a Tauri `UPDATE` command.
-    - [ ] Refresh the UI with the updated data.
+    - [x] Add an "Edit" button to each row in the payments table.
+    - [x] Clicking "Edit" will open an `n-modal` component pre-filled with the selected payment's data.
+    - [x] Implement the save logic in the dialog to call a Tauri `UPDATE` command.
+    - [x] Refresh the UI with the updated data.
 
 3.  **Delete Payments**
-    - [ ] Add a "Delete" button to each row.
-    - [ ] On click, use the `@tauri-apps/plugin-dialog` to show a confirmation prompt.
-    - [ ] If confirmed, call a Tauri `DELETE` command and remove the payment from the list.
+    - [x] Add a "Delete" button to each row.
+    - [x] On click, use the `@tauri-apps/plugin-dialog` to show a confirmation prompt.
+    - [x] If confirmed, call a Tauri `DELETE` command and remove the payment from the list.
 
 ---
 
 ### Phase 3: PDF Export
 
 _Objective: Allow users to save the payment list as a PDF file._
+_Tauri Plugins Needed: `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-fs`, `@tauri-apps/plugin-shell`_
+_NPM Packages Needed: `html2canvas-pro`, `jspdf`_
 
 1.  **Implement PDF Generation**
     - [ ] Add an "Export to PDF" button to the UI.
@@ -67,13 +79,15 @@ _Objective: Allow users to save the payment list as a PDF file._
 ### Phase 4: Polishing & Refinements
 
 _Objective: Improve the user experience and add final touches._
+_Tauri Plugins Needed: `@tauri-apps/plugin-window-state`, `@tauri-apps/plugin-log`_
 
 1.  **UX Enhancements**
     - [ ] Use `@tauri-apps/plugin-window-state` to save and restore the window's size and position.
-    - [ ] Add loading indicators (e.g., `QSpinner`) during database operations.
-    - [ ] Provide user feedback on success or failure of operations using Quasar's `QNotify` plugin.
+    - [ ] Add loading indicators (e.g., `n-spin`) during database operations.
+    - [ ] Provide user feedback on success or failure of operations using Naive UI's `notification` system.
 
 2.  **Error Handling & Logging**
+    - [x] Implement basic error handling for database operations.
     - [ ] Implement comprehensive error handling for all Tauri command calls.
     - [ ] Use the `@tauri-apps/plugin-log` to log errors to a file for easier debugging.
 

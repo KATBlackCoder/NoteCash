@@ -1,22 +1,20 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "$schema": "https://schema.tauri.app/config/2",
   "productName": "notecash",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "ml.notecash.kat",
   "build": {
-    "frontendDist": "../dist/spa",
-    "devUrl": "http://localhost:9000",
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build"
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
         "title": "notecash",
         "width": 800,
-        "height": 600,
-        "resizable": true,
-        "fullscreen": false
+        "height": 600
       }
     ],
     "security": {
